@@ -1,0 +1,169 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+
+:root {
+  --cream: #faf7f2;
+  --blush: #f5e6e0;
+  --rose: #e8c5bc;
+  --dusty: #c9968a;
+  --mauve: #9d6e65;
+  --wine: #6b3d38;
+  --ink: #2c1a17;
+  --fog: #f0ebe4;
+  --gold: #c8a97e;
+  --gold-light: #eddcc4;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background-color: var(--cream);
+  color: var(--ink);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Noise texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.022;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--cream); }
+::-webkit-scrollbar-thumb { background: var(--rose); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--dusty); }
+
+/* ── UTILITY LAYERS ── */
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center gap-2 bg-wine text-cream px-8 py-3.5 text-xs tracking-widest uppercase font-sans transition-all duration-300 cursor-pointer relative overflow-hidden;
+  }
+  .btn-primary:hover {
+    @apply -translate-y-0.5;
+    box-shadow: 0 8px 30px rgba(107,61,56,0.25);
+  }
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 bg-transparent text-wine border border-wine/30 px-8 py-3.5 text-xs tracking-widest uppercase font-sans transition-all duration-300 cursor-pointer;
+  }
+  .btn-ghost:hover {
+    @apply bg-blush border-rose -translate-y-0.5;
+  }
+  .section-tag {
+    @apply inline-flex items-center gap-2 text-gold text-xs tracking-[0.2em] uppercase mb-3;
+  }
+  .section-tag::before {
+    content: '';
+    @apply block w-6 h-px bg-gold;
+  }
+  .section-title {
+    @apply font-serif text-wine font-light leading-tight;
+    font-size: clamp(2rem, 4vw, 3.4rem);
+  }
+  .section-title em {
+    @apply italic text-mauve not-italic;
+    font-style: italic !important;
+  }
+  .card {
+    @apply bg-cream border border-gold/20 transition-all duration-300;
+  }
+  .card:hover {
+    box-shadow: 0 20px 50px rgba(107,61,56,0.1);
+  }
+  .input-field {
+    @apply w-full bg-fog border border-gold/25 px-4 py-3 text-ink text-sm font-light outline-none transition-all duration-200 placeholder:text-dusty/60;
+  }
+  .input-field:focus {
+    @apply border-mauve/60;
+    box-shadow: 0 0 0 3px rgba(157,110,101,0.08);
+  }
+  .label {
+    @apply block text-xs tracking-widest uppercase text-mauve/80 mb-2;
+  }
+  .page-container {
+    @apply max-w-6xl mx-auto px-6;
+  }
+  .status-badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium tracking-wide;
+  }
+}
+
+/* ── STORY PAGE SPECIFIC ── */
+.story-hero-text {
+  text-shadow: 0 2px 40px rgba(0,0,0,0.4);
+}
+
+.cinematic-overlay {
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(20,6,4,0.15) 40%,
+    rgba(20,6,4,0.8) 80%,
+    rgba(20,6,4,0.95) 100%
+  );
+}
+
+/* Music player progress bar */
+.progress-bar {
+  @apply h-0.5 bg-gold/30 relative cursor-pointer;
+}
+.progress-fill {
+  @apply h-full bg-gold transition-all duration-100;
+}
+
+/* Photo grid animations */
+.photo-reveal {
+  animation: photoReveal 1.2s ease forwards;
+}
+@keyframes photoReveal {
+  from { opacity: 0; transform: scale(1.04); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Letter typing effect */
+.typed-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: var(--gold);
+  animation: blink 1s step-end infinite;
+  vertical-align: text-bottom;
+  margin-left: 2px;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* Cinematic chapter divider */
+.chapter-line {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin: 3rem 0;
+}
+.chapter-line::before,
+.chapter-line::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(200,169,126,0.4), transparent);
+}
+
+/* Dashboard status colors */
+.status-submitted  { @apply bg-blue-50 text-blue-700 border border-blue-200; }
+.status-in-production { @apply bg-amber-50 text-amber-700 border border-amber-200; }
+.status-review     { @apply bg-purple-50 text-purple-700 border border-purple-200; }
+.status-completed  { @apply bg-emerald-50 text-emerald-700 border border-emerald-200; }
