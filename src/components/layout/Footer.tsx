@@ -15,12 +15,13 @@ export default function Footer() {
         <div>
           <div className="text-gold/60 text-[10px] tracking-[0.2em] uppercase mb-4">Explore</div>
           <ul className="space-y-2.5">
-            {['Occasions','How It Works','Pricing','Demo'].map(item => (
+            {['Occasions','How It Works','Pricing'].map(item => (
               <li key={item}>
                 <a href={`/#${item.toLowerCase().replace(' ','-')}`}
                    className="text-white/35 text-xs hover:text-white/70 transition-colors font-light">{item}</a>
               </li>
             ))}
+            <Link to="/demo" className="text-mauve text-xs tracking-widest uppercase hover:text-wine transition-colors">View Demo</Link>
           </ul>
         </div>
         <div>
@@ -41,6 +42,7 @@ export default function Footer() {
               ['Terms of Service', '/terms'],
               ['Refund Policy', '/refund'],
               ['Contact', '/contact'],
+              ['Our Story', '/about'],
             ].map(([label, href]) => (
               <li key={label}>
                 <Link to={href} className="text-white/35 text-xs hover:text-white/70 transition-colors font-light">{label}</Link>
@@ -51,7 +53,7 @@ export default function Footer() {
       </div>
       <div className="bg-[#140906] px-[5%] py-4 flex justify-between items-center">
         <span className="text-white/20 text-xs font-light">© 2025 WishStory. All rights reserved. wishstory.in</span>
-        <span className="text-gold/40 text-xs">Made with love ♥</span>
+        <span className="text-gold/40 text-xs">Made by SG.</span>
       </div>
     </footer>
   )

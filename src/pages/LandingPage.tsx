@@ -1,8 +1,12 @@
-import {  useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { motion, useInView } from 'framer-motion'
-import { Pen, Play } from 'lucide-react'
+import { Pen, Play, ArrowRight, Heart, Sparkles } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
 import { OCCASIONS, PACKAGE_FEATURES } from '@/lib/utils'
+import GiftShopTeaser from '@/components/sections/GiftShopTeaser'
+import { quizApi } from '@/lib/quizApi'
 
 // ── ANIMATION VARIANTS ──
 const fadeUp = {
@@ -21,8 +25,61 @@ function RevealSection({ children, className = '' }: { children: React.ReactNode
   )
 }
 
+// ── INLINE QUIZ ENTRY (embedded in landing page) ──
+interface QuizFormValues { partner1Name: string; partner2Name: string }
+
+function QuizEntry() {
+  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
+  const { register, handleSubmit, formState: { errors } } = useForm<QuizFormValues>()
+
+  const onSubmit = async ({ partner1Name, partner2Name }: QuizFormValues) => {
+    setLoading(true)
+    try {
+      const { quizId } = await quizApi.start(partner1Name.trim(), partner2Name.trim())
+      navigate(`/quiz/${quizId}?partner=1`)
+    } catch {
+      toast.error('Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 w-full">
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <input
+            {...register('partner1Name', { required: true, maxLength: 60 })}
+            type="text"
+            placeholder="Your name"
+            className={`w-full bg-white/10 border ${errors.partner1Name ? 'border-rose-400' : 'border-white/20'} text-cream placeholder-white/30 text-sm px-4 py-3 rounded-lg focus:outline-none focus:border-gold/60 transition`}
+          />
+        </div>
+        <div>
+          <input
+            {...register('partner2Name', { required: true, maxLength: 60 })}
+            type="text"
+            placeholder="Partner's name"
+            className={`w-full bg-white/10 border ${errors.partner2Name ? 'border-rose-400' : 'border-white/20'} text-cream placeholder-white/30 text-sm px-4 py-3 rounded-lg focus:outline-none focus:border-gold/60 transition`}
+          />
+        </div>
+      </div>
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full py-3.5 rounded-lg bg-gold hover:bg-gold-light text-wine text-sm font-semibold tracking-wide transition disabled:opacity-60 flex items-center justify-center gap-2"
+      >
+        {loading
+          ? <span className="w-4 h-4 border-2 border-wine border-t-transparent rounded-full animate-spin" />
+          : <><Heart className="w-4 h-4 fill-wine" /> Start the quiz</>
+        }
+      </button>
+    </form>
+  )
+}
+
 export default function LandingPage() {
-  // Petal animation refs
   const petalColors = ['#e8c5bc','#f5e6e0','#e0b5aa','#f0d0c5','#daa898','#f5e6e0']
 
   return (
@@ -30,13 +87,11 @@ export default function LandingPage() {
 
       {/* ── HERO ── */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-[5%] pt-28 pb-20">
-        {/* Background layers */}
         <div className="absolute inset-0 bg-hero-gradient" />
         <div className="absolute inset-0" style={{
           background: 'radial-gradient(ellipse 80% 60% at 50% 20%, rgba(232,197,188,0.45) 0%, transparent 65%), radial-gradient(ellipse 50% 70% at 15% 80%, rgba(200,169,126,0.2) 0%, transparent 60%)'
         }} />
 
-        {/* Floating petals */}
         {petalColors.map((color, i) => (
           <div
             key={i}
@@ -100,7 +155,6 @@ export default function LandingPage() {
           </motion.div>
         </div>
 
-        {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -117,7 +171,7 @@ export default function LandingPage() {
         <div className="flex animate-ticker whitespace-nowrap">
           {[...Array(2)].map((_, pass) => (
             <div key={pass} className="flex flex-shrink-0">
-              {['Birthday Stories','Anniversary Memories','Friendship Tributes','Family Legacies','Wedding Proposals','Memorial Pages','Celebration Films','Love Letters'].map((item) => (
+              {['Birthday Stories','Anniversary Memories','Friendship Tributes','Family Legacies','Wedding Proposals','Memorial Pages','Celebration Films','Love Letters','Compatibility Quiz'].map((item) => (
                 <span key={item} className="inline-flex items-center gap-6 px-8 text-[11px] tracking-[0.15em] uppercase text-white/40">
                   {item}
                   <span className="w-1 h-1 rounded-full bg-gold/50 flex-shrink-0" />
@@ -212,31 +266,23 @@ export default function LandingPage() {
               className="relative bg-[#2c1a17] overflow-hidden shadow-luxury-lg"
               style={{ aspectRatio: '3/4', maxHeight: '520px' }}
             >
-              {/* Decorative circles */}
               <div className="absolute -top-20 -right-24 w-96 h-96 rounded-full border border-gold/8" />
               <div className="absolute -bottom-10 -left-16 w-60 h-60 rounded-full border border-gold/6" />
-
-              {/* Photo placeholders */}
               <div className="absolute inset-0">
                 <div className="absolute top-[15%] left-[8%] w-[45%] h-[32%] bg-gold/8 rotate-[-2deg]" />
                 <div className="absolute top-[20%] left-[47%] w-[40%] h-[25%] bg-gold/6 rotate-[3deg]" />
                 <div className="absolute top-[52%] left-[14%] w-[30%] h-[22%] bg-gold/7 rotate-[-1deg]" />
               </div>
-
-              {/* Floating story text */}
               <div className="absolute top-[10%] left-[8%] z-10">
                 <p className="font-serif text-[11px] text-gold/50 tracking-[0.2em] uppercase mb-1">A story for</p>
                 <p className="font-serif text-4xl font-light text-cream/85 italic">Priya</p>
               </div>
-
               <div className="absolute top-[48%] left-[8%] right-[8%] z-10 text-center">
                 <div className="w-full h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent mb-4" />
                 <p className="font-serif text-sm italic text-cream/45 leading-relaxed">
                   "Some memories are too precious<br/>to live only in our minds."
                 </p>
               </div>
-
-              {/* Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-[#1e0e0b]/90 via-transparent to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
                 <div className="inline-flex items-center gap-1.5 bg-gold/20 border border-gold/35 text-gold-light text-[10px] tracking-[0.15em] uppercase px-2.5 py-1 mb-3">
@@ -262,7 +308,6 @@ export default function LandingPage() {
         </RevealSection>
 
         <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-          {/* Signature */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -290,7 +335,6 @@ export default function LandingPage() {
             </Link>
           </motion.div>
 
-          {/* Luxe */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -332,9 +376,9 @@ export default function LandingPage() {
 
         <div className="grid md:grid-cols-3 gap-5 max-w-5xl">
           {[
-            { quote: 'She cried for ten minutes. I\'ve never seen her that moved. WishStory captured something I could never have expressed myself.', author: 'Arjun Reddy', occasion: 'Anniversary · Luxe Film', initials: 'AR' },
+            { quote: "She cried for ten minutes. I've never seen her that moved. WishStory captured something I could never have expressed myself.", author: 'Arjun Reddy', occasion: 'Anniversary · Luxe Film', initials: 'AR' },
             { quote: 'I gifted this to my mother on her 60th birthday. She called it the most beautiful thing anyone has ever done for her.', author: 'Shreya Kapoor', occasion: 'Birthday · Signature Story', initials: 'SK' },
-            { quote: 'We used WishStory for our friend\'s farewell. She watched it three times. Some stories deserve to be seen, not just told.', author: 'Meera Joshi', occasion: 'Friendship · Luxe Film', initials: 'MJ' },
+            { quote: "We used WishStory for our friend's farewell. She watched it three times. Some stories deserve to be seen, not just told.", author: 'Meera Joshi', occasion: 'Friendship · Luxe Film', initials: 'MJ' },
           ].map((t, i) => (
             <motion.div
               key={t.author}
@@ -359,6 +403,209 @@ export default function LandingPage() {
           ))}
         </div>
       </section>
+
+      {/* ── GIFT SHOP ── */}
+      <GiftShopTeaser />
+
+      {/* ── COMPATIBILITY QUIZ ── */}
+      <section id="quiz" className="relative py-28 px-[5%] bg-wine overflow-hidden">
+        {/* Background glow */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: 'radial-gradient(ellipse 70% 60% at 50% 100%, rgba(200,169,126,0.1) 0%, transparent 65%), radial-gradient(ellipse 40% 50% at 10% 20%, rgba(232,197,188,0.07) 0%, transparent 60%)'
+        }} />
+
+        {/* Decorative circles */}
+        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full border border-white/5 pointer-events-none" />
+        <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full border border-white/5 pointer-events-none" />
+
+        <div className="relative z-10 max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+
+          {/* Left — copy */}
+          <RevealSection>
+            <motion.div variants={fadeUp} className="section-tag" style={{ color: 'rgba(200,169,126,0.7)' }}>
+              <span style={{ background: 'rgba(200,169,126,0.5)', display: 'block', width: '24px', height: '1px' }} />
+              New · Free
+            </motion.div>
+
+            <motion.h2
+              variants={fadeUp}
+              className="font-serif font-light text-cream leading-tight mt-3 mb-4"
+              style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}
+            >
+              How compatible<br />
+              <em className="italic text-gold-light">are you two?</em>
+            </motion.h2>
+
+            <motion.p variants={fadeUp} className="text-white/50 font-light text-base leading-relaxed mb-8">
+              Answer 20 questions independently — love language, lifestyle, future goals,
+              daily habits, and personality. Share the link with your partner.
+              Reveal your compatibility score together.
+            </motion.p>
+
+            {/* Stats row */}
+            <motion.div variants={fadeUp} className="flex gap-8 mb-10">
+              {[
+                { value: '20', label: 'Questions' },
+                { value: '5',  label: 'Categories' },
+                { value: '3',  label: 'Minutes each' },
+              ].map(stat => (
+                <div key={stat.label}>
+                  <p className="font-serif text-3xl font-light text-gold-light">{stat.value}</p>
+                  <p className="text-xs text-white/40 tracking-wide mt-0.5">{stat.label}</p>
+                </div>
+              ))}
+            </motion.div>
+
+            {/* Category pills */}
+            <motion.div variants={fadeUp} className="flex flex-wrap gap-2 mb-10">
+              {['Love Language', 'Lifestyle', 'Future Goals', 'Daily Habits', 'Personality'].map(cat => (
+                <span
+                  key={cat}
+                  className="text-[11px] tracking-wide px-3 py-1.5 rounded-full border border-white/15 text-white/45"
+                >
+                  {cat}
+                </span>
+              ))}
+            </motion.div>
+
+            {/* Inline quiz entry form */}
+            <motion.div variants={fadeUp} className="max-w-sm">
+              <QuizEntry />
+              <p className="text-[11px] text-white/25 mt-3 text-center">
+                No account needed · Link expires in 48 hours
+              </p>
+            </motion.div>
+          </RevealSection>
+
+          {/* Right — visual score card mockup */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="hidden md:block"
+          >
+            <div className="relative">
+              {/* Glow behind card */}
+              <div className="absolute inset-0 blur-2xl opacity-20 rounded-3xl"
+                style={{ background: 'radial-gradient(ellipse at center, #c8a97e 0%, transparent 70%)' }}
+              />
+
+              {/* Score card */}
+              <div className="relative bg-[#1e0e0b]/80 border border-white/10 rounded-2xl p-8 backdrop-blur-sm">
+
+                {/* Names */}
+                <div className="text-center mb-6">
+                  <p className="text-[11px] text-white/35 tracking-[0.15em] uppercase mb-2">Compatibility result</p>
+                  <p className="font-serif text-2xl font-light text-cream">
+                    Priya <span className="text-rose-400">♥</span> Rohan
+                  </p>
+                </div>
+
+                {/* Gauge mockup */}
+                <div className="flex justify-center mb-6">
+                  <div className="relative w-36 h-36">
+                    <svg viewBox="0 0 120 120" className="w-full h-full -rotate-90">
+                      <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="10" />
+                      <motion.circle
+                        cx="60" cy="60" r="50"
+                        fill="none"
+                        stroke="#c8a97e"
+                        strokeWidth="10"
+                        strokeLinecap="round"
+                        strokeDasharray={`${2 * Math.PI * 50}`}
+                        strokeDashoffset={`${2 * Math.PI * 50}`}
+                        whileInView={{ strokeDashoffset: `${2 * Math.PI * 50 * (1 - 0.87)}` }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1.4, ease: 'easeOut', delay: 0.4 }}
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="font-serif text-4xl font-light text-cream">87</span>
+                      <span className="text-[10px] text-white/35">/ 100</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-center mb-6">
+                  <p className="font-serif text-xl text-gold-light">💑 Perfect Pair</p>
+                  <p className="text-xs text-white/35 mt-1">Deeply aligned where it matters most</p>
+                </div>
+
+                {/* Category bars */}
+                <div className="space-y-2.5">
+                  {[
+                    { label: 'Love Language', pct: 92, color: 'bg-rose-400' },
+                    { label: 'Lifestyle',     pct: 80, color: 'bg-amber-400' },
+                    { label: 'Future Goals',  pct: 88, color: 'bg-purple-400' },
+                    { label: 'Daily Habits',  pct: 75, color: 'bg-teal-400' },
+                    { label: 'Personality',   pct: 85, color: 'bg-blue-400' },
+                  ].map((bar, i) => (
+                    <div key={bar.label}>
+                      <div className="flex justify-between text-[11px] mb-1">
+                        <span className="text-white/40">{bar.label}</span>
+                        <span className="text-white/55 font-medium">{bar.pct}%</span>
+                      </div>
+                      <div className="h-1.5 bg-white/8 rounded-full overflow-hidden">
+                        <motion.div
+                          className={`h-full rounded-full ${bar.color}`}
+                          initial={{ width: 0 }}
+                          whileInView={{ width: `${bar.pct}%` }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.8, delay: 0.5 + i * 0.08, ease: 'easeOut' }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* WishStory watermark */}
+                <div className="flex items-center justify-center gap-1.5 mt-6">
+                  <Heart className="w-3 h-3 text-rose-400 fill-rose-400" />
+                  <span className="text-[10px] text-white/20 tracking-wide">wishstory.in</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+      
+      <section className="py-28 px-[5%] bg-cream">
+        <RevealSection className="text-center mb-14">
+          <motion.div variants={fadeUp} className="section-tag justify-center">Free Tools</motion.div>
+          <motion.h2 variants={fadeUp} className="section-title mt-2">Make something <em>beautiful</em></motion.h2>
+          <motion.p variants={fadeUp} className="text-dusty text-base font-light mt-3 max-w-md mx-auto">
+            Free creative tools for couples — no account needed.
+          </motion.p>
+        </RevealSection>
+
+        <RevealSection className="grid grid-cols-2 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+          {[
+            { to: '/36-questions', emoji: '💬', title: '36 Questions',  sub: 'Fall deeper in love', bg: 'from-rose-900/40 to-purple-900/40', border: 'border-rose-800/30' },
+            
+            { to: '/polaroid',     emoji: '📷', title: 'Polaroid',     sub: 'Vintage photo filter', bg: 'from-amber-900/40 to-rose-900/40', border: 'border-amber-800/30' },
+           
+          ].map((tool, i) => (
+            <motion.div
+              key={tool.to}
+              variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { delay: i * 0.08, duration: 0.6 } } }}
+              whileHover={{ y: -6 }}
+            >
+              <Link
+                to={tool.to}
+                className={`flex flex-col items-center text-center p-6 rounded-2xl bg-gradient-to-br ${tool.bg} border ${tool.border} hover:border-opacity-60 transition-all duration-300 group h-full`}
+                style={{ background: 'rgba(30,10,20,0.6)', backdropFilter: 'blur(12px)' }}
+              >
+                <span className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-300">{tool.emoji}</span>
+                <p className="font-serif text-lg text-cream mb-1">{tool.title}</p>
+                <p className="text-xs text-white/40 font-light">{tool.sub}</p>
+                <span className="mt-3 text-xs text-rose-300/60 font-light tracking-widest uppercase">Free →</span>
+              </Link>
+            </motion.div>
+          ))}
+        </RevealSection>
+      </section>
+
 
       {/* ── CTA ── */}
       <section id="cta" className="relative py-32 px-[5%] bg-wine text-center overflow-hidden">

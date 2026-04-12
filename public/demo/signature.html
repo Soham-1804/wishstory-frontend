@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>For Priya — from Arjun</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=Caveat:wght@400;500;600;700&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#08060a;
+  --ink:#f0ebe4;
+  --gold:#c8a97e;
+  --gold2:#e8d4b4;
+  --rose:#e8a898;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --hand:'Caveat',cursive;
+  --body:'Lora',Georgia,serif;
+  --sans:'DM Sans',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ─────────────────────────────────────────
+   SPLASH — feels like opening an envelope
+───────────────────────────────────────── */
+#splash{
+  position:fixed;inset:0;z-index:999;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;
+  transition:opacity 2s ease,visibility 2s;
+}
+#splash.out{opacity:0;visibility:hidden;pointer-events:none}
+#spCanvas{position:absolute;inset:0;width:100%;height:100%}
+
+.sp-envelope{
+  position:relative;z-index:2;
+  text-align:center;
+  animation:envIn 1.8s ease both;
+}
+@keyframes envIn{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+
+.sp-envelope-icon{
+  font-size:48px;margin-bottom:20px;display:block;
+  animation:envBob 3s ease-in-out infinite;
+  filter:drop-shadow(0 0 24px rgba(200,169,126,.4));
+}
+@keyframes envBob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-10px) rotate(2deg)}}
+
+.sp-to{
+  font-family:var(--hand);font-size:clamp(2.2rem,5vw,3.5rem);
+  color:rgba(240,235,228,.88);margin-bottom:4px;
+  letter-spacing:.02em;
+}
+.sp-from{
+  font-family:var(--hand);font-size:1.1rem;
+  color:rgba(200,169,126,.5);margin-bottom:30px;
+  letter-spacing:.04em;
+}
+
+/* Wax seal button */
+.sp-seal{
+  width:80px;height:80px;border-radius:50%;
+  background:radial-gradient(circle at 38% 38%,#8b3a2a,#5c1f14);
+  border:none;cursor:pointer;position:relative;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 14px;
+  box-shadow:0 4px 20px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.1);
+  transition:transform .3s ease,box-shadow .3s ease;
+  animation:sealPulse 2.5s ease-in-out infinite;
+}
+.sp-seal:hover{transform:scale(1.06);box-shadow:0 8px 32px rgba(140,58,42,.5),inset 0 1px 0 rgba(255,255,255,.15)}
+@keyframes sealPulse{0%,100%{box-shadow:0 4px 20px rgba(0,0,0,.5),0 0 0 0 rgba(140,58,42,.4),inset 0 1px 0 rgba(255,255,255,.1)}50%{box-shadow:0 4px 20px rgba(0,0,0,.5),0 0 0 10px rgba(140,58,42,0),inset 0 1px 0 rgba(255,255,255,.1)}}
+.sp-seal-text{
+  font-family:var(--hand);font-size:.9rem;color:rgba(240,220,200,.7);
+  letter-spacing:.03em;line-height:1.25;text-align:center;
+}
+.sp-seal-w{
+  position:absolute;inset:6px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.1);
+  display:flex;align-items:center;justify-content:center;
+}
+.sp-open-label{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:rgba(200,169,126,.35);margin-top:2px}
+
+/* ─────────────────────────────────────────
+   HERO — full bleed photograph
+───────────────────────────────────────── */
+#hero{
+  height:100vh;position:relative;
+  display:flex;align-items:flex-end;overflow:hidden;
+}
+.h-photo{
+  position:absolute;inset:0;
+  background:url('https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?w=1800&q=85&fit=crop') center/cover no-repeat;
+  transform:scale(1.08);transition:transform .1s linear;
+}
+.h-ov{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(8,6,10,.15) 0%,rgba(8,6,10,.05) 25%,rgba(8,6,10,.45) 60%,rgba(8,6,10,.97) 100%)}
+.h-ov2{position:absolute;inset:0;background:rgba(8,6,10,.28)}
+.h-text{
+  position:relative;z-index:3;padding:0 8% 5.5rem;max-width:780px;
+  opacity:0;transform:translateY(40px);
+  transition:opacity 1.8s ease,transform 1.8s ease;
+}
+.h-text.in{opacity:1;transform:none}
+.h-occasion{
+  font-family:var(--hand);font-size:1.2rem;
+  color:rgba(200,169,126,.6);margin-bottom:12px;
+}
+.h-name{
+  font-family:var(--serif);font-weight:300;
+  font-size:clamp(5rem,11vw,10rem);
+  line-height:.88;letter-spacing:-.02em;
+  text-shadow:0 2px 80px rgba(0,0,0,.7);
+  color:rgba(240,235,228,.94);
+}
+.h-name em{font-style:italic;color:var(--gold2);display:block}
+.h-line{
+  margin-top:20px;
+  font-family:var(--serif);font-style:italic;
+  font-size:clamp(1rem,1.8vw,1.3rem);
+  color:rgba(240,235,228,.3);max-width:400px;line-height:1.6;
+}
+.scroll-cue{
+  position:absolute;bottom:28px;left:50%;
+  transform:translateX(-50%);z-index:4;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  opacity:0;transition:opacity .8s 3s;
+  animation:scuB 2.5s ease-in-out 3s infinite;
+}
+.scroll-cue.on{opacity:.35}
+@keyframes scuB{0%,100%{transform:translateX(-50%)translateY(0)}50%{transform:translateX(-50%)translateY(9px)}}
+.scl{width:1px;height:36px;background:linear-gradient(to bottom,rgba(200,169,126,.7),transparent)}
+
+/* ─────────────────────────────────────────
+   THE OPENING — big feeling, no ceremony
+───────────────────────────────────────── */
+.opening{
+  padding:100px 8%;
+  display:flex;align-items:center;justify-content:center;
+  min-height:70vh;position:relative;text-align:center;
+}
+.opening-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 55% 50% at 50% 50%,rgba(140,58,42,.12) 0%,transparent 65%);
+}
+.opening-inner{position:relative;z-index:2;max-width:700px}
+.opening-text{
+  font-family:var(--serif);
+  font-size:clamp(1.9rem,4.5vw,3.6rem);
+  font-weight:300;font-style:italic;
+  line-height:1.28;color:rgba(240,235,228,.88);
+}
+.opening-text .line{
+  display:block;overflow:hidden;
+}
+.opening-text .line-inner{
+  display:block;
+  transform:translateY(100%);opacity:0;
+  transition:transform 1s ease,opacity 1s ease;
+}
+.opening-text .line-inner.in{transform:none;opacity:1}
+
+/* ─────────────────────────────────────────
+   THINGS I KNOW ABOUT YOU
+   — the most personal section
+───────────────────────────────────────── */
+.things{padding:0 0 80px;background:var(--bg)}
+.things-header{
+  padding:0 8% 48px;
+  display:flex;align-items:center;gap:20px;
+}
+.things-header-line{flex:1;height:1px;background:linear-gradient(to right,transparent,rgba(200,169,126,.18))}
+.things-header-text{
+  font-family:var(--hand);font-size:1.05rem;
+  color:rgba(200,169,126,.45);white-space:nowrap;
+}
+.thing-row{
+  display:flex;align-items:stretch;
+  border-top:1px solid rgba(200,169,126,.07);
+  opacity:0;transform:translateX(-24px);
+  transition:opacity .8s ease,transform .8s ease;
+}
+.thing-row.in{opacity:1;transform:none}
+.thing-row:last-child{border-bottom:1px solid rgba(200,169,126,.07)}
+.thing-num{
+  width:80px;flex-shrink:0;
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:32px 0;
+  font-family:var(--hand);font-size:1.4rem;
+  color:rgba(200,169,126,.2);border-right:1px solid rgba(200,169,126,.07);
+}
+.thing-text{
+  padding:32px 8%;flex:1;
+  font-family:var(--body);font-size:clamp(1rem,1.6vw,1.18rem);
+  font-style:italic;color:rgba(240,235,228,.72);
+  line-height:1.75;
+}
+.thing-text em{font-style:normal;color:rgba(200,169,126,.85);font-family:var(--hand);font-size:1.05em}
+
+/* ─────────────────────────────────────────
+   PHOTO + MEMORY PAIRS
+───────────────────────────────────────── */
+.mem-pair{
+  display:grid;grid-template-columns:1fr 1fr;
+  min-height:520px;
+  opacity:0;transform:translateY(24px);
+  transition:opacity 1.1s ease,transform 1.1s ease;
+}
+.mem-pair.in{opacity:1;transform:none}
+.mem-pair.flip{direction:rtl}
+.mem-pair.flip .mem-words{direction:ltr}
+.mem-photo{position:relative;overflow:hidden;min-height:420px}
+.mem-photo img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  transform:scale(1.08);transition:transform 9s ease;
+}
+.mem-pair:hover .mem-photo img{transform:scale(1.02)}
+.mem-photo-ov{position:absolute;inset:0;background:rgba(8,6,10,.18);z-index:1}
+.mem-photo-stamp{
+  position:absolute;bottom:16px;left:16px;z-index:2;
+  font-family:var(--hand);font-size:13px;
+  color:rgba(240,235,228,.38);
+}
+.mem-words{
+  padding:52px 48px;
+  display:flex;flex-direction:column;justify-content:center;
+  background:#100c14;direction:ltr;
+}
+.mem-n{
+  font-family:var(--serif);font-size:5rem;font-weight:300;
+  color:rgba(200,169,126,.06);line-height:1;margin-bottom:14px;
+}
+.mem-title{
+  font-family:var(--serif);font-size:clamp(1.4rem,2.4vw,2rem);
+  font-weight:300;line-height:1.18;
+  color:rgba(240,235,228,.88);margin-bottom:16px;
+}
+.mem-title em{font-style:italic;color:var(--gold2)}
+.mem-body{
+  font-family:var(--body);font-size:clamp(.93rem,1.3vw,1.05rem);
+  font-style:italic;line-height:1.82;
+  color:rgba(240,235,228,.52);margin-bottom:22px;
+}
+/* Handwritten note inside memory */
+.mem-hand{
+  font-family:var(--hand);font-size:1.05rem;
+  color:rgba(200,169,126,.6);
+  padding:14px 18px;
+  background:rgba(200,169,126,.04);
+  border-left:2px solid rgba(200,169,126,.18);
+  line-height:1.58;
+}
+
+/* ─────────────────────────────────────────
+   PULL QUOTE — full bleed photo behind it
+───────────────────────────────────────── */
+.pull{position:relative;overflow:hidden;padding:100px 8%;text-align:center}
+.pull-photo{
+  position:absolute;inset:0;
+  background:url('https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=1400&q=80&fit=crop') center/cover;
+  filter:brightness(.15) saturate(.45);
+}
+.pull-grad{position:absolute;inset:0;background:rgba(8,6,10,.55)}
+.pull-inner{position:relative;z-index:2}
+.pull-inner::before,.pull-inner::after{
+  content:'';display:block;margin:0 auto;
+  width:50%;height:1px;
+  background:linear-gradient(to right,transparent,rgba(200,169,126,.2),transparent);
+}
+.pull-inner::before{margin-bottom:52px}
+.pull-inner::after{margin-top:52px}
+.pull-text{
+  font-family:var(--serif);
+  font-size:clamp(1.6rem,3.5vw,3rem);
+  font-weight:300;font-style:italic;
+  line-height:1.3;color:rgba(200,169,126,.9);
+}
+.pull-attr{
+  font-family:var(--hand);font-size:1rem;
+  color:rgba(200,169,126,.35);margin-top:16px;
+}
+
+/* ─────────────────────────────────────────
+   THE LETTER — longform, personal voice
+───────────────────────────────────────── */
+.letter{background:var(--bg);padding:80px 0 60px}
+.letter-inner{max-width:620px;margin:0 auto;padding:0 28px}
+.l-dear{
+  font-family:var(--hand);font-size:1.55rem;
+  color:rgba(240,235,228,.45);
+  margin-bottom:32px;
+  opacity:0;transform:translateY(12px);
+  transition:opacity .8s,transform .8s;
+}
+.l-dear.in{opacity:1;transform:none}
+.l-para{
+  font-family:var(--body);
+  font-size:clamp(1.08rem,1.75vw,1.25rem);
+  font-style:italic;line-height:1.94;
+  color:rgba(240,235,228,.78);
+  letter-spacing:.012em;margin-bottom:1.65em;
+}
+.l-para .w{
+  display:inline-block;opacity:0;transform:translateY(8px);
+  transition:opacity .5s ease,transform .5s ease;
+}
+.l-para .w.in{opacity:1;transform:none}
+.l-para strong{font-weight:500;font-style:normal;color:rgba(240,235,228,.96)}
+.l-sign{
+  font-family:var(--hand);font-size:1.6rem;
+  color:rgba(240,235,228,.4);margin-top:16px;line-height:1.5;
+  opacity:0;transform:translateY(12px);transition:opacity .8s,transform .8s;
+}
+.l-sign.in{opacity:1;transform:none}
+
+/* ─────────────────────────────────────────
+   PARALLAX BANNER
+───────────────────────────────────────── */
+.par{
+  min-height:55vh;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;padding:80px 8%;text-align:center;
+}
+.par-bg{
+  position:absolute;inset:-20%;
+  background:url('https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=1600&q=80&fit=crop') center/cover;
+  filter:brightness(.18) saturate(.4);will-change:transform;
+}
+.par-ov{position:absolute;inset:0;background:rgba(8,6,10,.52)}
+.par-cnt{position:relative;z-index:2;max-width:680px}
+.par-q{
+  font-family:var(--serif);font-size:clamp(1.8rem,4vw,3.4rem);
+  font-weight:300;font-style:italic;line-height:1.28;
+  color:rgba(240,235,228,.8);
+}
+.par-who{font-family:var(--hand);font-size:1rem;color:rgba(200,169,126,.35);margin-top:18px}
+
+/* ─────────────────────────────────────────
+   CLOSING — full screen, emotional finale
+───────────────────────────────────────── */
+.closing{
+  min-height:100vh;position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;padding:80px 24px;text-align:center;
+}
+.cl-photo{
+  position:absolute;inset:0;
+  background:url('https://images.unsplash.com/photo-1502635385003-ee1e6a1a742d?w=1600&q=80&fit=crop') center/cover;
+  filter:brightness(.12) saturate(.3) sepia(.4);
+}
+#clCanvas{position:absolute;inset:0;width:100%;height:100%}
+.cl-grad{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(130,52,38,.4) 0%,rgba(8,6,10,.85) 68%);
+}
+.cl-inner{position:relative;z-index:3;max-width:560px}
+.cl-rose{
+  font-size:40px;display:block;margin-bottom:20px;
+  filter:drop-shadow(0 0 28px rgba(255,150,130,.55));
+  animation:roseHb 1.5s ease-in-out infinite;
+}
+@keyframes roseHb{
+  0%,100%{transform:scale(1)}
+  14%{transform:scale(1.24)}
+  28%{transform:scale(1)}
+  42%{transform:scale(1.12)}
+  70%{transform:scale(1)}
+}
+.cl-line{width:1px;height:64px;background:linear-gradient(to bottom,rgba(200,169,126,.55),transparent);margin:0 auto 40px}
+.cl-wish{
+  font-family:var(--serif);font-size:clamp(2.6rem,6vw,5.2rem);
+  font-weight:300;line-height:1.04;
+  color:rgba(240,235,228,.9);margin-bottom:6px;
+}
+.cl-wish em{font-style:italic;color:var(--gold2);display:block}
+.cl-sign{
+  font-family:var(--hand);font-size:1.6rem;
+  color:rgba(240,235,228,.38);margin:24px 0 40px;line-height:1.5;
+}
+.cl-brand{display:flex;align-items:center;justify-content:center;gap:16px}
+.cbl{width:42px;height:1px;background:rgba(200,169,126,.2)}
+.cbt{font-family:var(--serif);font-size:13px;color:rgba(200,169,126,.28);letter-spacing:.06em}
+
+/* ─────────────────────────────────────────
+   CTA
+───────────────────────────────────────── */
+.cta{padding:72px 28px;text-align:center;background:rgba(200,169,126,.04);border-top:1px solid rgba(200,169,126,.09)}
+.cta-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(200,169,126,.1);border:1px solid rgba(200,169,126,.2);color:var(--gold2);font-size:9px;letter-spacing:.18em;text-transform:uppercase;padding:5px 13px;margin-bottom:14px}
+.cta-cdot{width:5px;height:5px;background:var(--gold);border-radius:50%;animation:bdP 2s ease-in-out infinite}
+@keyframes bdP{0%,100%{opacity:1}50%{opacity:.18}}
+.cta-tag{font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(200,169,126,.38);margin-bottom:10px}
+.cta-h{font-family:var(--serif);font-size:clamp(1.7rem,4vw,3rem);font-weight:300;color:rgba(240,235,228,.72);margin-bottom:10px;line-height:1.2}
+.cta-p{font-size:12px;color:rgba(240,235,228,.28);margin-bottom:28px;line-height:1.78}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.cta-pri{display:inline-block;background:linear-gradient(135deg,rgba(200,169,126,.9),rgba(175,140,95,.85));color:#08060a;padding:15px 42px;font-size:10px;letter-spacing:.22em;text-transform:uppercase;text-decoration:none;font-family:var(--sans);font-weight:500;transition:all .3s}
+.cta-pri:hover{background:linear-gradient(135deg,#eddcc4,#c8a97e);transform:translateY(-2px)}
+.cta-gho{display:inline-block;border:1px solid rgba(200,169,126,.22);color:rgba(200,169,126,.55);padding:15px 28px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;font-family:var(--sans);transition:all .3s}
+.cta-gho:hover{border-color:rgba(200,169,126,.5);color:var(--gold)}
+footer{background:#040208;padding:22px;text-align:center}
+footer p{font-size:10px;color:rgba(240,235,228,.1)}
+footer a{color:rgba(200,169,126,.28);text-decoration:none}
+
+/* Scroll reveals */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .9s ease,transform .9s ease}
+.rv.in{opacity:1;transform:none}
+.rv.slow{transition-duration:1.4s}
+.rv.d1{transition-delay:.12s}.rv.d2{transition-delay:.24s}.rv.d3{transition-delay:.36s}.rv.d4{transition-delay:.48s}
+
+@media(max-width:700px){
+  .mem-pair{grid-template-columns:1fr;min-height:auto}
+  .mem-pair.flip{direction:ltr}
+  .mem-photo{min-height:260px}.mem-words{padding:30px 22px}
+  .thing-num{width:48px}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════ SPLASH ════════ -->
+<div id="splash">
+  <canvas id="spCanvas"></canvas>
+  <div class="sp-envelope">
+    <span class="sp-envelope-icon">💌</span>
+    <p class="sp-to">For Priya</p>
+    <p class="sp-from">a note from Arjun</p>
+    <button class="sp-seal" onclick="open_story()">
+      <div class="sp-seal-w">
+        <div>
+          <div class="sp-seal-text">open</div>
+        </div>
+      </div>
+    </button>
+    <p class="sp-open-label">tap to open</p>
+  </div>
+</div>
+
+<!-- ════════ HERO ════════ -->
+<section id="hero">
+  <div class="h-photo" id="hPhoto"></div>
+  <div class="h-ov"></div>
+  <div class="h-ov2"></div>
+  <div class="h-text" id="hText">
+    <p class="h-occasion">🎂 your birthday</p>
+    <h1 class="h-name"><span style="display:block;font-size:.28em;font-family:'DM Sans',sans-serif;font-style:normal;font-weight:300;letter-spacing:.2em;color:rgba(240,235,228,.28);margin-bottom:8px">for</span><em>Priya</em></h1>
+    <p class="h-line">written by someone who has been paying attention for two years.</p>
+  </div>
+  <div class="scroll-cue" id="scue"><div class="scl"></div></div>
+</section>
+
+<!-- ════════ OPENING ════════ -->
+<section class="opening">
+  <div class="opening-bg"></div>
+  <div class="opening-inner">
+    <p class="opening-text">
+      <span class="line"><span class="line-inner" id="ol1">There are people who change the shape of a room</span></span>
+      <span class="line"><span class="line-inner" id="ol2">just by walking into it.</span></span>
+      <span class="line" style="margin-top:.4em"><span class="line-inner" id="ol3" style="font-family:'Caveat',cursive;font-size:.72em;color:rgba(200,169,126,.7)">You are one of those people.</span></span>
+    </p>
+  </div>
+</section>
+
+<!-- ════════ THINGS I KNOW ABOUT YOU ════════ -->
+<section class="things">
+  <div class="things-header rv">
+    <div class="things-header-line"></div>
+    <span class="things-header-text">things I know about you</span>
+    <div class="things-header-line" style="background:linear-gradient(to left,transparent,rgba(200,169,126,.18))"></div>
+  </div>
+
+  <div class="thing-row rv">
+    <div class="thing-num">01</div>
+    <p class="thing-text">You snort when something <em>actually</em> catches you off guard. Not the polite laugh you use for strangers. The real one. I've heard it maybe six times. It's my favourite sound in the world.</p>
+  </div>
+  <div class="thing-row rv d1">
+    <div class="thing-num">02</div>
+    <p class="thing-text">You always check on the waiter before we leave. Always. Even when we're running late. I've watched you do it fourteen times and I've never once said anything about it, but I think about it all the time.</p>
+  </div>
+  <div class="thing-row rv d2">
+    <div class="thing-num">03</div>
+    <p class="thing-text">When you're tired you put things back in the wrong place. Keys in the fridge once. <em>Once.</em> That's how I know. That's my signal. I started keeping an eye out for it. I haven't missed it since.</p>
+  </div>
+  <div class="thing-row rv d1">
+    <div class="thing-num">04</div>
+    <p class="thing-text">You have a playlist you've never mentioned. I saw it once by accident. I didn't say anything. I still think about what the songs are.</p>
+  </div>
+  <div class="thing-row rv d2">
+    <div class="thing-num">05</div>
+    <p class="thing-text">You remember the birthdays of people who forget yours. And you still show up for them. With cake. <em>With actual cake.</em> I will never be entirely over this.</p>
+  </div>
+  <div class="thing-row rv d3">
+    <div class="thing-num">06</div>
+    <p class="thing-text">The way you say my name when you're about to tell me something important is different from every other time you say it. Just slightly. I'm not sure you know that. I've been noticing it for eight months.</p>
+  </div>
+</section>
+
+<!-- ════════ PULL QUOTE ════════ -->
+<div class="pull rv slow">
+  <div class="pull-photo"></div>
+  <div class="pull-grad"></div>
+  <div class="pull-inner">
+    <p class="pull-text">"You make the ordinary feel like something worth keeping."</p>
+    <p class="pull-attr">— Arjun, 2am, not able to sleep</p>
+  </div>
+</div>
+
+<!-- ════════ MEMORIES ════════ -->
+<div class="mem-pair" id="mp1">
+  <div class="mem-photo">
+    <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=900&q=80&fit=crop" alt=""/>
+    <div class="mem-photo-ov"></div>
+    <div class="mem-photo-stamp">the day we met</div>
+  </div>
+  <div class="mem-words">
+    <div class="mem-n">01</div>
+    <h3 class="mem-title">You said <em>"I had a thing"</em><br/>and sat down</h3>
+    <p class="mem-body">Fifteen minutes late. Not remotely sorry. "I had a thing" was the entire explanation and then you ordered a coffee and started talking like you'd always been here.</p>
+    <p class="mem-hand">"I'd been there 22 minutes early. I've never told you that."</p>
+  </div>
+</div>
+
+<div class="mem-pair flip" id="mp2">
+  <div class="mem-photo">
+    <img src="https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=900&q=80&fit=crop" alt=""/>
+    <div class="mem-photo-ov"></div>
+    <div class="mem-photo-stamp">the midnight drive</div>
+  </div>
+  <div class="mem-words">
+    <div class="mem-n">02</div>
+    <h3 class="mem-title">A three-hour playlist<br/>for a <em>forty-minute drive</em></h3>
+    <p class="mem-body">You'd made a playlist called "for the car." It was three hours long. It rained so hard we pulled over twice. I don't remember where we were going. I remember every song.</p>
+    <p class="mem-hand">"I still listen to that playlist. Don't tell me if you changed it."</p>
+  </div>
+</div>
+
+<div class="mem-pair" id="mp3">
+  <div class="mem-photo">
+    <img src="https://images.unsplash.com/photo-1474552226712-ac0f0961a954?w=900&q=80&fit=crop" alt=""/>
+    <div class="mem-photo-ov"></div>
+    <div class="mem-photo-stamp">2am, your kitchen floor</div>
+  </div>
+  <div class="mem-words">
+    <div class="mem-n">03</div>
+    <h3 class="mem-title">You told me something<br/>you'd <em>never told anyone</em></h3>
+    <p class="mem-body">We were sitting on your kitchen floor. I don't remember how we got there. You just — said it. Like you'd decided to trust me before I'd even agreed to be trustworthy.</p>
+    <p class="mem-hand">"I still don't know why you chose me. I'm grateful every day that you did."</p>
+  </div>
+</div>
+
+<!-- ════════ LETTER ════════ -->
+<section class="letter">
+  <div class="letter-inner">
+    <p class="l-dear" id="lDear">Priya —</p>
+    <p class="l-para" id="lp1">I've been trying to write this for three weeks. I kept deleting it because it didn't sound like me. It sounded like someone trying to sound like someone who knows how to say things beautifully. I don't always know how to do that. So this is just me.</p>
+    <p class="l-para" id="lp2">You make me feel like I'm worth paying attention to. Which is — you have no idea how rare that is. Or maybe you do, and that's why you're so careful about giving it.</p>
+    <p class="l-para" id="lp3">I've been paying attention back."I notice everything". The snort. The waiter check. The keys in the fridge. The way you say my name differently when something matters. I've been collecting these things like they're precious, because they are, because you are, and I wanted you to know that on your birthday even though I'm embarrassingly bad at saying it.</p>
+    <p class="l-para" id="lp4">Happy birthday. I'm so glad you exist. I'm so glad you're here, specifically, in my life, specifically, being exactly who you are.</p>
+    <p class="l-sign" id="lSign">love, Arjun 🌸</p>
+  </div>
+</section>
+
+<!-- ════════ PARALLAX BANNER ════════ -->
+<div class="par" id="parBanner">
+  <div class="par-bg" id="parBg"></div>
+  <div class="par-ov"></div>
+  <div class="par-cnt rv slow">
+    <p class="par-q">"She didn't just make me happy. She made me feel like happiness was something I was allowed to have."</p>
+    <p class="par-who">— Arjun, 11:52pm on a Tuesday</p>
+  </div>
+</div>
+
+<!-- ════════ CLOSING ════════ -->
+<div class="closing">
+  <div class="cl-photo"></div>
+  <canvas id="clCanvas"></canvas>
+  <div class="cl-grad"></div>
+  <div class="cl-inner rv slow">
+    <span class="cl-rose">🌸</span>
+    <div class="cl-line"></div>
+    <h2 class="cl-wish">Happy Birthday,<br/><em>Priya</em></h2>
+    <p class="cl-sign">with everything I have — Arjun</p>
+    <div class="cl-brand"><div class="cbl"></div><span class="cbt">wishstory.in</span><div class="cbl"></div></div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta">
+  <div class="cta-chip"><span class="cta-cdot"></span>Signature Story · ₹1,250</div>
+  <p class="cta-tag">This is a sample</p>
+  <h2 class="cta-h">Create a story like this<br/>for someone you love</h2>
+  <p class="cta-p">Delivered in 24 hours · Human crafted · Private link · Background music</p>
+  <div class="cta-row">
+    <a href="/register" class="cta-pri">Begin Your Story</a>
+    <a href="/demo/luxe.html" class="cta-gho">See the Luxe Film →</a>
+  </div>
+</div>
+<footer><p>Sample Signature Story · <a href="/">WishStory</a> · wishstory.in</p></footer>
+
+<script>
+/* Star canvas */
+function initStars(id,n){
+  const c=document.getElementById(id),x=c.getContext('2d')
+  const R=()=>{c.width=innerWidth;c.height=innerHeight};R()
+  window.addEventListener('resize',R)
+  const S=Array.from({length:n||140},()=>({
+    px:Math.random(),py:Math.random(),s:.3+Math.random()*1.6,
+    vx:(Math.random()-.5)*.14,vy:-.04-Math.random()*.18,
+    o:.06+Math.random()*.44,cl:Math.random()>.5?'200,169,126':'232,200,185'
+  }));
+  (function T(){
+    x.clearRect(0,0,c.width,c.height)
+    S.forEach(p=>{
+      x.beginPath();x.arc(p.px*c.width,p.py*c.height,p.s,0,Math.PI*2)
+      x.fillStyle=`rgba(${p.cl},${p.o})`;x.fill()
+      p.px+=p.vx/c.width;p.py+=p.vy/c.height
+      if(p.py<0){p.py=1;p.px=Math.random()}
+      if(p.px<0)p.px=1;if(p.px>1)p.px=0
+    })
+    requestAnimationFrame(T)
+  })()
+}
+
+/* Firefly canvas */
+function initFireflies(){
+  const c=document.getElementById('clCanvas'),x=c.getContext('2d')
+  function R(){c.width=c.offsetWidth||innerWidth;c.height=c.offsetHeight||innerHeight};R()
+  window.addEventListener('resize',R)
+  const F=Array.from({length:95},()=>({
+    px:Math.random(),py:1+Math.random()*.25,
+    vx:(Math.random()-.5)*.00025,vy:-.00030-Math.random()*.00055,
+    s:.5+Math.random()*2.5,lf:Math.random(),ls:.002+Math.random()*.007,
+    cl:Math.random()>.45?'200,169,126':'242,210,185'
+  }));
+  (function T(){
+    x.clearRect(0,0,c.width,c.height)
+    const g=x.createRadialGradient(c.width/2,c.height*.42,0,c.width/2,c.height*.42,c.width*.4)
+    g.addColorStop(0,'rgba(130,52,38,.26)');g.addColorStop(1,'rgba(8,6,10,0)')
+    x.fillStyle=g;x.fillRect(0,0,c.width,c.height)
+    F.forEach(f=>{
+      f.lf+=f.ls;if(f.lf>1){f.lf=0;f.px=Math.random();f.py=1.05}
+      x.beginPath();x.arc(f.px*c.width,f.py*c.height,f.s,0,Math.PI*2)
+      x.fillStyle=`rgba(${f.cl},${Math.sin(f.lf*Math.PI)*.78})`;x.fill()
+      f.px+=f.vx;f.py+=f.vy
+    })
+    requestAnimationFrame(T)
+  })()
+}
+
+/* Word wrap for letter paras */
+function wrapWords(id){
+  const el=document.getElementById(id);if(!el)return
+  el.innerHTML=el.innerHTML
+    .replace(/<strong>([\s\S]*?)<\/strong>/g,'<ST>$1</ST>')
+    .replace(/([^\s<&][^\s<]*)/g,m=>m.startsWith('<')||m.includes('<')?m:`<span class="w">${m}</span>`)
+    .replace(/<ST>([\s\S]*?)<\/ST>/g,'<strong>$1</strong>')
+}
+function revealWords(id,d){
+  document.getElementById(id)?.querySelectorAll('.w').forEach((w,i)=>setTimeout(()=>w.classList.add('in'),(d||55)+i*23))
+}
+
+/* Observers */
+let openingDone=false
+function startReveal(){
+  // Generic reveals
+  const rv=new IntersectionObserver(e=>e.forEach(en=>{
+    if(en.isIntersecting){en.target.classList.add('in');rv.unobserve(en.target)}
+  }),{threshold:.05,rootMargin:'0px 0px -15px 0px'})
+  document.querySelectorAll('.rv').forEach(el=>rv.observe(el))
+
+  // Opening lines — staggered
+  const opObs=new IntersectionObserver(e=>e.forEach(en=>{
+    if(en.isIntersecting&&!openingDone){
+      openingDone=true
+      setTimeout(()=>document.getElementById('ol1').classList.add('in'),200)
+      setTimeout(()=>document.getElementById('ol2').classList.add('in'),700)
+      setTimeout(()=>document.getElementById('ol3').classList.add('in'),1300)
+      opObs.unobserve(en.target)
+    }
+  }),{threshold:.2})
+  const openSec=document.querySelector('.opening')
+  if(openSec)opObs.observe(openSec)
+
+  // Thing rows
+  const trObs=new IntersectionObserver(e=>e.forEach(en=>{
+    if(en.isIntersecting){en.target.classList.add('in');trObs.unobserve(en.target)}
+  }),{threshold:.08})
+  document.querySelectorAll('.thing-row').forEach(el=>trObs.observe(el))
+
+  // Letter — word by word
+  const lObs=new IntersectionObserver(e=>e.forEach(en=>{
+    if(en.isIntersecting){
+      if(en.target.classList.contains('l-dear')||en.target.classList.contains('l-sign'))
+        en.target.classList.add('in')
+      else revealWords(en.target.id)
+      lObs.unobserve(en.target)
+    }
+  }),{threshold:.08,rootMargin:'0px 0px -20px 0px'})
+  ;['lDear','lp1','lp2','lp3','lp4','lSign'].forEach(id=>{
+    const el=document.getElementById(id);if(el)lObs.observe(el)
+  })
+
+  // Memory pairs
+  const mpObs=new IntersectionObserver(e=>e.forEach(en=>{
+    if(en.isIntersecting){en.target.classList.add('in');mpObs.unobserve(en.target)}
+  }),{threshold:.06})
+  document.querySelectorAll('.mem-pair').forEach(el=>mpObs.observe(el))
+}
+
+/* Scroll */
+window.addEventListener('scroll',()=>{
+  const y=scrollY
+  const hp=document.getElementById('hPhoto')
+  if(hp)hp.style.transform=`scale(1.08) translateY(${y*.07}px)`
+  const pb=document.getElementById('parBg')
+  if(pb){
+    const r=document.getElementById('parBanner').getBoundingClientRect()
+    pb.style.transform=`translateY(${((innerHeight-r.top)/(innerHeight+r.height)-.5)*46}px)`
+  }
+},{passive:true})
+
+/* Begin */
+function open_story(){
+  ;['lp1','lp2','lp3','lp4'].forEach(wrapWords)
+  document.getElementById('splash').classList.add('out')
+  initFireflies()
+  setTimeout(()=>{
+    document.getElementById('hText').classList.add('in')
+    document.getElementById('scue').classList.add('on')
+  },500)
+  setTimeout(()=>startReveal(),800)
+}
+
+initStars('spCanvas',140)
+</script>
+</body>
+</html>
