@@ -44,6 +44,14 @@ export default function GiftProductPage() {
 
   return (
     <div className="min-h-screen bg-cream">
+      {/* Coming soon overlay — covers gift pages and blurs background */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="absolute inset-0 bg-cream/70 backdrop-blur-md" />
+        <div className="relative z-10 text-center px-6">
+          <h2 className="font-serif text-wine text-3xl mb-2">Coming soon</h2>
+          <p className="text-mauve text-sm">Gift Shop features are coming soon — please check back later.</p>
+        </div>
+      </div>
 
       {/* Breadcrumb */}
       <div className="px-[5%] py-4 border-b border-gold/15 flex items-center gap-2 text-[11px] text-dusty font-light">

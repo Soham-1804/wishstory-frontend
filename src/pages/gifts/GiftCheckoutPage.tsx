@@ -114,6 +114,14 @@ export default function GiftCheckoutPage() {
 
   return (
     <div className="min-h-screen bg-fog">
+      {/* Coming soon overlay — covers checkout and blurs background */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="absolute inset-0 bg-cream/70 backdrop-blur-md" />
+        <div className="relative z-10 text-center px-6">
+          <h2 className="font-serif text-wine text-3xl mb-2">Coming soon</h2>
+          <p className="text-mauve text-sm">Checkout for gifts will be available soon. Stay tuned!</p>
+        </div>
+      </div>
       {/* Header */}
       <div className="bg-cream border-b border-gold/20 px-[5%] py-4 flex items-center justify-between">
         <Link to="/" className="font-serif text-xl text-wine">Wish<span className="text-gold">Story</span></Link>

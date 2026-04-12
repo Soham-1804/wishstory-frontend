@@ -298,6 +298,14 @@ export default function GiftShopPage() {
 
   return (
     <div className="min-h-screen bg-cream">
+      {/* Coming soon overlay — covers gift area and blurs background */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="absolute inset-0 bg-cream/70 backdrop-blur-md" />
+        <div className="relative z-10 text-center px-6">
+          <h2 className="font-serif text-wine text-4xl mb-2">Coming soon</h2>
+          <p className="text-mauve text-sm">The WishStory Gift Shop is launching soon — stay tuned ✨</p>
+        </div>
+      </div>
 
       {/* ── HERO BANNER ── */}
       <section className="relative bg-wine overflow-hidden">
